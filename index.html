@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="ru">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <link rel="stylesheet" href="/scss/styles.css" />
+        <title>Адаптивный сайт</title>
+    </head>
+    <body class="animated-gradient">
+        <h1>Добро пожаловать!</h1>
+
+        <section class="scroll-animate animated-gradient-section">
+            <div class="floating-element one"></div>
+            <div class="floating-element two"></div>
+            <div class="floating-element three"></div>
+            <p class="scale-rotate-in">Кнопка секции 1</p>
+        </section>
+
+        <section class="scroll-animate">
+            <p>Контент секции 2</p>
+            <button class="button">Кнопка</button>
+        </section>
+
+        <section class="scroll-animate">
+            <p>Контент секции 3</p>
+            <div class="count-up" data-target="1000">0</div>
+        </section>
+
+        <section class="scroll-animate flip-card-section">
+            <div class="flip-card">
+                <div class="flip-card-inner">
+                    <div class="flip-card-front">
+                        <h2>Карточка</h2>
+                        <p>ну ка наведика</p>
+                    </div>
+                    <div class="flip-card-back">
+                        <h2>Информация</h2>
+                        <p>
+                            А вы прелесть , будьте всегда с хорошим настроением
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="scroll-animate combo-animation-section">
+            <div class="combo-container">
+                <div class="animated-box one">
+                    <p>Вращение + Пульсация</p>
+                </div>
+                <div class="animated-box two">
+                    <p>Парящий эффект</p>
+                </div>
+                <div class="animated-box three">
+                    <p>Волна + Масштаб</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="scroll-animate shape-transformation-section">
+            <div class="shape-container">
+                <div class="shape one"></div>
+                <div class="shape two"></div>
+                <div class="shape three"></div>
+            </div>
+        </section>
+
+        <section class="scroll-animate advanced-transformations-section">
+            <div class="transformation-container">
+                <div class="transformation one"></div>
+                <div class="transformation two"></div>
+                <div class="transformation three"></div>
+            </div>
+        </section>
+
+        <section class="scroll-animate mood-section">
+            <div class="mood-container">
+                <input
+                    type="range"
+                    min="0"
+                    max="100"
+                    value="50"
+                    class="mood-slider"
+                    id="moodSlider"
+                />
+                <div class="mood-faces">
+                    <div class="mood-face">😡</div>
+                    <div class="mood-face">😞</div>
+                    <div class="mood-face">😐</div>
+                    <div class="mood-face">😊</div>
+                    <div class="mood-face">😄</div>
+                </div>
+                <div class="mood-effect"></div>
+            </div>
+        </section>
+
+        <section class="scroll-animate shape-transformation-section">
+            <h1 class="initial-text">Нажмите на меня...</h1>
+            <h1 class="animated-text" style="display: none">
+                <span class="typing-effect"></span>
+            </h1>
+        </section>
+
+        <script>
+            document.addEventListener('DOMContentLoaded', () => {
+                const counters = document.querySelectorAll('.count-up')
+                counters.forEach(counter => {
+                    const target = +counter.getAttribute('data-target')
+                    let count = 0
+                    const duration = 2000
+                    const increment = target / (duration / 16)
+
+                    const updateCount = () => {
+                        count += increment
+                        if (count < target) {
+                            counter.textContent = Math.ceil(count)
+                            requestAnimationFrame(updateCount)
+                        } else {
+                            counter.textContent = target
+                        }
+                    }
+                    updateCount()
+                })
+
+                const observer = new IntersectionObserver(
+                    entries => {
+                        entries.forEach(entry => {
+                            if (entry.isIntersecting) {
+                                entry.target.classList.add('visible')
+                                observer.unobserve(entry.target)
+                            }
+                        })
+                    },
+                    { threshold: 0.1 },
+                )
+
+                document
+                    .querySelectorAll('.scroll-animate')
+                    .forEach(section => observer.observe(section))
+
+                // Анимация переключения текста
+                const initialText = document.querySelector('.initial-text')
+                const animatedText = document.querySelector('.animated-text')
+                const typingEffect = document.querySelector('.typing-effect')
+                const cursor = document.querySelector('.cursor')
+
+                initialText.addEventListener('click', () => {
+                    initialText.style.display = 'none'
+                    animatedText.style.display = 'block'
+                    const text =
+                        'да понимаю , наверное вы ожидали что я сделаю что-то более сложное, мне просто очень тяжело без макет сделать сайт ну по тз вроде все гуд , в прошлый раз я вас на реакте сделал все , могу написать что-то еще , главное чтобы я сдал , в плане навыков вроде все оки'
+
+                    let index = 0
+                    const speed = 50 // скорость печати в мс
+                    typingEffect.textContent = ''
+
+                    const type = () => {
+                        if (index < text.length) {
+                            typingEffect.textContent += text.charAt(index)
+                            index++
+                            setTimeout(type, speed)
+                        } else {
+                            cursor.style.display = 'none'
+                        }
+                    }
+
+                    type()
+                })
+
+                document
+                    .getElementById('moodSlider')
+                    .addEventListener('input', e => {
+                        const value = e.target.value
+                        const moodEffect =
+                            document.querySelector('.mood-effect')
+                        moodEffect.style.background = `hsl(${value}, 80%, 50%)`
+                        moodEffect.style.borderRadius = `${value / 2}%`
+                        moodEffect.style.animation = `pulse ${
+                            1 + value / 50
+                        }s ease-in-out infinite`
+                        moodEffect.style.transform = `scale(${1 + value / 200})`
+                    })
+            })
+        </script>
+    </body>
+</html>
